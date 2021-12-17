@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Buld') {
+        stage('Build') {
             steps {
                 echo 'Compiling worker app'
                 dir('worker'){
@@ -18,13 +18,14 @@ pipeline {
             steps {
                 echo 'Testing worker app'
                 dir('worker'){
-                  
+                  sh 'mvn clean test'
 		}
             }
         }
         stage('Package') {
             steps {
                 echo 'Packaging worker app'
+		sh 'mvn package -DskipTests'
             }
         }
 
