@@ -25,7 +25,9 @@ pipeline {
         stage('Package') {
             steps {
                 echo 'Packaging worker app'
-		sh 'mvn package -DskipTests'
+                dir('worker'){
+		  sh 'mvn package -DskipTests'
+		}
             }
         }
 
