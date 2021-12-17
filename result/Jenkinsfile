@@ -12,24 +12,20 @@ pipeline {
                 echo 'Compiling result app'
                 dir('result'){
                   sh 'npm install'
-		}
+		            }
             }
         }
         stage('Test') {
-	    when{
+	          when{
               changeset "**/result/**"
             }
             steps {
                 echo 'Testing result app'
                 dir('result'){
-                  sh 'npm install && npm test'
-		}
+                  sh "npm install"
+                  sh 'npm test'
+		            }
             }
-        }
-    }
-    post{
-        always{ 
-            echo "Pipeline successfully completed"
         }
     }
 }
