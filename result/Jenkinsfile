@@ -23,7 +23,7 @@ pipeline {
                 echo 'Testing result app'
                 dir('result'){
                   nodejs(nodeJSInstallationName: 'node 8.9.0') {
-                    sh 'mvn clean test'
+                    sh 'npm install && npm test'
                   }
 		}
             }
