@@ -12,4 +12,5 @@ RUN rm -r /app
 
 #WORKDIR /run
 
+
 CMD java -jar /run/worker.jar
