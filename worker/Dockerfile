@@ -8,7 +8,7 @@ RUN mvn package -DskipTests
 
 RUN mv target/worker-jar-with-dependencies.jar /run/worker.jar
 
-RUN rm -r /app /root/.m2 
+RUN rm -r /app 
 
 #WORKDIR /run
 
