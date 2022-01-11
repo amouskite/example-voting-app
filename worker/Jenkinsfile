@@ -1,13 +1,14 @@
 pipeline {
-    agent {
-      docker {
-        image 'maven:3.6.1-alpine'
-        args '-v $HOME/.m2:/root/.m2'
-      }
-    }
+    agent none
 
     stages {
         stage('Build') {
+            agent {
+              docker {
+                image 'maven:3.6.1-alpine'
+                args '-v $HOME/.m2:/root/.m2'
+              }
+            }
             when{
               changeset "**/worker/**"
             }
@@ -19,6 +20,12 @@ pipeline {
             }
         }
         stage('Test') {
+            agent {
+              docker {
+                image 'maven:3.6.1-alpine'
+                args '-v $HOME/.m2:/root/.m2'
+              }
+            }
 	          when{
               changeset "**/worker/**"
             }
@@ -30,6 +37,12 @@ pipeline {
             }
         }
         stage('Package') {
+            agent {
+              docker {
+                image 'maven:3.6.1-alpine'
+                args '-v $HOME/.m2:/root/.m2'
+              }
+            }
             when{
               changeset "**/worker/**"
               branch "master"
@@ -42,7 +55,25 @@ pipeline {
 		            }
             }
         }
-
+        stage('Docker Package') {
+            agent any
+            when{
+              changeset "**/worker/**"
+              branch "master"
+            }
+            steps {
+                echo 'Creating docker image for worker app'
+                dir('worker'){
+                  script{
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-credentials') {
+                      def dockerImage = docker.build("amouskite/worker:${env.BUILD_ID}")
+                      dockerImage.push()
+                      dockerImage.push('master')
+                    }
+                  }
+		            }
+            }
+        }
     }
 
 }
