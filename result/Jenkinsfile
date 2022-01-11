@@ -40,6 +40,7 @@ pipeline {
             agent any
             when{
               changeset "**/result/**"
+              branch "master"
             }
             steps {
                 echo 'Creating docker image for result app'
@@ -48,6 +49,7 @@ pipeline {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-credentials') {
                       def dockerImage = docker.build("amouskite/result:${env.BUILD_ID}")
                       dockerImage.push()
+                      dockerImage.push('master')
                     }
                   }
 		            }

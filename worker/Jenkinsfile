@@ -16,7 +16,6 @@ pipeline {
                 echo 'Compiling worker app'
                 dir('worker'){
                   sh 'mvn compile'
-                  sleep 100
 		            }
             }
         }
