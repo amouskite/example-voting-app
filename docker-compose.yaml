@@ -1,0 +1,44 @@
+version: "3.8"
+
+networks:
+  instavote:
+
+volumes:
+  db-data:
+
+services:
+  vote:
+    image: amouskite/vote:master
+    ports:
+      - 5000:80
+    depends_on:
+      - redis
+    networks:
+      - instavote
+  result:
+    image: amouskite/result:master
+    ports:
+      - 5001:4000
+    depends_on:
+      - db
+    networks:
+      - instavote
+  worker:
+    image: amouskite/worker:master
+    depends_on:
+      - db
+      - redis
+    networks:
+      - instavote
+  redis:
+    image: redis:alpine
+    networks:
+      - instavote
+  db:
+    image: postgres:9.4
+    networks:
+      - instavote
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
