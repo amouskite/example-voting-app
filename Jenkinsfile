@@ -161,11 +161,30 @@ pipeline {
 		            }
             }
         }
-        stage('Sonarqube') {
+        stage('Vote-Docker Package') {
+            agent any
+            when{
+              changeset "**/vote/**"
+              branch "master"
+            }
+            steps {
+                echo 'Creating docker image for vote app'
+                dir('vote'){
+                  script{
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-credentials') {
+                      def dockerImage = docker.build("amouskite/vote:${env.BUILD_ID}")
+                      dockerImage.push()
+                      dockerImage.push('master')
+                    }
+                  }
+		            }
+            }
+        }
+         stage('Sonarqube') {
           agent any
-/*          when{
+          when{
             branch 'master'
-          }*/
+          }
           tools {
             jdk "JDK11" // the name you have given the JDK installation in Global Tool Configuration
           }
@@ -191,25 +210,7 @@ pipeline {
                 }
             }
         }
-        stage('Vote-Docker Package') {
-            agent any
-            when{
-              changeset "**/vote/**"
-              branch "master"
-            }
-            steps {
-                echo 'Creating docker image for vote app'
-                dir('vote'){
-                  script{
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-credentials') {
-                      def dockerImage = docker.build("amouskite/vote:${env.BUILD_ID}")
-                      dockerImage.push()
-                      dockerImage.push('master')
-                    }
-                  }
-		            }
-            }
-        }
+
         stage('deploy to dev'){
           agent any
           when{
